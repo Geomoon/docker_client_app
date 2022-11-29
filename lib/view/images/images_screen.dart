@@ -34,8 +34,13 @@ class ImagesScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20.0),
                 height: c.maxHeight - 140,
                 child: TabBarView(children: [
-                  Column(children: [SearchBarImages()]),
-                  Column(children: [LocalImages()]),
+                  Column(children: [
+                    SearchBarImages(),
+                    LocalImages(
+                      constraints: c,
+                    )
+                  ]),
+                  Column(children: []),
                 ]),
               )
             ]),
@@ -68,53 +73,64 @@ class SearchBarImages extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 500,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              style: TextStyle(fontFamily: 'Inter', fontSize: 12),
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search_rounded),
-                  hintText: 'Search by name',
-                  border: OutlineInputBorder()),
-            ),
-          )
-        ],
+      child: TextField(
+        style: const TextStyle(fontFamily: 'Inter', fontSize: 12),
+        decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search_rounded),
+            hintText: 'Search by name',
+            border: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Theme.of(context).colorScheme.outline))),
       ),
     );
   }
 }
 
 class LocalImages extends StatelessWidget {
-  const LocalImages({super.key});
+  const LocalImages({super.key, required this.constraints});
+
+  final List _itemsCard = const ['FF', 'AA', 'CC', 'fdsaf', 'GH', 'OK', 'LK'];
+  final BoxConstraints constraints;
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-        border: TableBorder.all(
-            color: Theme.of(context).colorScheme.outline,
-            borderRadius: BorderRadius.circular(16.0)),
-        dataRowHeight: 40,
-        showCheckboxColumn: true,
-        columns: [
-          DataColumn(label: Text('Name')),
-          DataColumn(label: Text('Oficial')),
-          DataColumn(label: Text('Stars'), numeric: true),
-          DataColumn(label: Text('Pull')),
-        ],
-        rows: [
-          DataRow(cells: [
-            DataCell(Text('ubuntu')),
-            DataCell(Icon(Icons.check)),
-            DataCell(Text('25468')),
-            DataCell(Icon(Icons.download)),
-          ]),
-          DataRow(cells: [
-            DataCell(Text('ubuntu')),
-            DataCell(Icon(Icons.check)),
-            DataCell(Text('68231')),
-            DataCell(Icon(Icons.download)),
-          ]),
-        ]);
+    return Container(
+      padding: const EdgeInsets.only(top: 24.0),
+      height: constraints.maxHeight - 300,
+      child: GridView.builder(
+        itemCount: _itemsCard.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 1,
+          mainAxisExtent: 100,
+        ),
+        itemBuilder: (context, index) =>
+            LocalImageCard(name: _itemsCard[index]),
+      ),
+    );
+  }
+}
+
+class LocalImageCard extends StatelessWidget {
+  const LocalImageCard({super.key, required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Theme.of(context).colorScheme.outline),
+          borderRadius: BorderRadius.circular(6.0)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [SelectableText(name)],
+        ),
+      ),
+    );
   }
 }
