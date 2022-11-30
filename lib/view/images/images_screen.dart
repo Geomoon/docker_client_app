@@ -32,7 +32,7 @@ class ImagesScreen extends StatelessWidget {
                   ]),
               Container(
                 padding: const EdgeInsets.only(top: 20.0),
-                height: c.maxHeight - 140,
+                height: c.maxHeight - 120,
                 child: TabBarView(children: [
                   Column(children: [
                     SearchBarImages(),
@@ -74,7 +74,7 @@ class SearchBarImages extends StatelessWidget {
     return SizedBox(
       width: 500,
       child: TextField(
-        style: const TextStyle(fontFamily: 'Inter', fontSize: 12),
+        style: const TextStyle(fontFamily: 'Inter', fontSize: 14),
         decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search_rounded),
             hintText: 'Search by name',
@@ -89,33 +89,70 @@ class SearchBarImages extends StatelessWidget {
 class LocalImages extends StatelessWidget {
   const LocalImages({super.key, required this.constraints});
 
-  final List _itemsCard = const ['FF', 'AA', 'CC', 'fdsaf', 'GH', 'OK', 'LK'];
+  final List _itemsCard = const [
+    '8fad08b3c84b',
+    'A4c0ba7e716c3A',
+    '8fad08b3c84bCC',
+    'e83f2533b5e7',
+    '9192ed4e4955',
+    '4c0ba7e716c3',
+    'e83f2533b5e7'
+  ];
   final BoxConstraints constraints;
 
   @override
   Widget build(BuildContext context) {
+    int crossAxisCount = constraints.maxWidth > 1260
+        ? 6
+        : (constraints.maxWidth >= 720
+            ? 4
+            : (constraints.maxWidth >= 480 ? 2 : 1));
+
     return Container(
       padding: const EdgeInsets.only(top: 24.0),
-      height: constraints.maxHeight - 300,
+      height: constraints.maxHeight - 200,
       child: GridView.builder(
         itemCount: _itemsCard.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 1,
-          mainAxisExtent: 100,
+          mainAxisExtent: constraints.maxWidth >= 720 ? 240 : 200,
         ),
-        itemBuilder: (context, index) =>
-            LocalImageCard(name: _itemsCard[index]),
+        itemBuilder: (context, index) => LocalImageCard(
+            name: _itemsCard[index],
+            createdAt: DateTime.now(),
+            tags: [
+              'mongo:latest',
+              'mongo:latest',
+              'mongo:latest',
+              'mongo:latest'
+            ],
+            ports: [
+              '5432:5432',
+              '5432:5432',
+            ]),
       ),
     );
   }
 }
 
 class LocalImageCard extends StatelessWidget {
-  const LocalImageCard({super.key, required this.name});
+  const LocalImageCard({
+    super.key,
+    required this.name,
+    required this.createdAt,
+    this.ports = const [],
+    required this.tags,
+  });
+
   final String name;
+  final List<String> tags;
+  final List<String>? ports;
+  final DateTime createdAt;
+
+  String _buildTagsString() => tags.join(', ');
+  String _buildPortsString() => ports!.join(' - ');
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +162,21 @@ class LocalImageCard extends StatelessWidget {
           side: BorderSide(color: Theme.of(context).colorScheme.outline),
           borderRadius: BorderRadius.circular(6.0)),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [SelectableText(name)],
+        padding: const EdgeInsets.all(10.0),
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
+          alignment: WrapAlignment.start,
+          //mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [const Text('ID: '), SelectableText(name)],
+            ),
+            SelectableText(_buildTagsString()),
+            const Text('Exposed Ports'),
+            SelectableText(_buildPortsString()),
+            Text(createdAt.toString())
+          ],
         ),
       ),
     );
