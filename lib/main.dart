@@ -19,10 +19,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: darkColorScheme,
-        textTheme: darkTextTheme,
-      ),
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
+          textTheme: darkTextTheme),
       themeMode: ThemeMode.dark,
       home: const Layout(),
     );
@@ -59,12 +58,10 @@ class _LayoutState extends State<Layout> {
                 width: 1,
                 color: Theme.of(context).colorScheme.outline),
             Expanded(
-              flex: 8,
-              child: Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                child: _views[_selectedIndex],
-              ),
-            ),
+                flex: 8,
+                child: Container(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    child: _views[_selectedIndex])),
           ],
         ),
       ),
@@ -107,14 +104,13 @@ class _LayoutState extends State<Layout> {
     ];
 
     return NavigationRail(
-      selectedIndex: _selectedIndex,
-      groupAlignment: -1,
-      onDestinationSelected: setIndex,
-      selectedLabelTextStyle: textStyle,
-      unselectedLabelTextStyle: textStyle,
-      labelType: labelType,
-      destinations: destinations,
-    );
+        selectedIndex: _selectedIndex,
+        groupAlignment: -1,
+        onDestinationSelected: setIndex,
+        selectedLabelTextStyle: textStyle,
+        unselectedLabelTextStyle: textStyle,
+        labelType: labelType,
+        destinations: destinations);
   }
 }
 

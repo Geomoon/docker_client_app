@@ -8,7 +8,10 @@ class ImagesDHInteractor implements ImagesDHInputPort {
   ImagesDHInteractor(this._dhOutputPort);
 
   @override
-  Future<List<ImageDH>> findByName(String name) {
-    return _dhOutputPort.findByName(name);
-  }
+  Future<List<ImageDH>> findByName(String name) =>
+      _dhOutputPort.findByName(name);
+
+  @override
+  Future<bool> pullImage(String name) async =>
+      await _dhOutputPort.pullImage(name);
 }

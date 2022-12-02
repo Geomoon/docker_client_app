@@ -21,7 +21,7 @@ class ImageDH {
       : name = json['name'],
         description = json['description'],
         pullCount = json['pull_count'],
-        starCount = json['start_count'],
+        starCount = json['star_count'],
         isTrusted = json['is_trusted'],
         isAutomated = json['is_automated'],
         isOfficial = json['is_official'];
