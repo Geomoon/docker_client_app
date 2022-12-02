@@ -250,9 +250,9 @@ class _DockerHubImagesViewState extends State<DockerHubImagesView> {
     _items = Future.value([]);
   }
 
-  void _onPullImage(String name) async {
+  Future<bool> _onPullImage(String name) async {
     bool installed = await _interactor.pullImage(name);
-    if (installed) ;
+    return installed;
   }
 
   @override
@@ -304,14 +304,31 @@ class _DockerHubImagesViewState extends State<DockerHubImagesView> {
   }
 }
 
-class DockerHubImageCard extends StatelessWidget {
-  const DockerHubImageCard(this._imageDH, {super.key, required this.onPull});
+class DockerHubImageCard extends StatefulWidget {
+  DockerHubImageCard(this._imageDH, {super.key, required this.onPull});
 
   final ImageDH _imageDH;
 
+  final Future<bool> Function(String) onPull;
+
+  @override
+  State<DockerHubImageCard> createState() => _DockerHubImageCardState();
+}
+
+class _DockerHubImageCardState extends State<DockerHubImageCard> {
   final TextStyle textStyle = const TextStyle(fontFamily: 'JetBrains');
 
-  final Function(String) onPull;
+  int _pulledState = 0;
+
+  void _onPullAction() async {
+    setState(() => _pulledState = 1);
+    bool isPulled = await widget.onPull(widget._imageDH.name);
+    if (isPulled) {
+      setState(() => _pulledState = 2);
+    } else {
+      setState(() => _pulledState = 0);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -328,27 +345,38 @@ class DockerHubImageCard extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(child: SelectableText(_imageDH.name)),
-                _imageDH.isOfficial
-                    ? const Icon(Icons.check_circle, color: Color(0xFF39D353))
+                widget._imageDH.isOfficial
+                    ? const Icon(Icons.verified_rounded,
+                        color: Color(0xFF39D353))
                     : Container(),
-                ElevatedButton.icon(
-                    onPressed: () => onPull(_imageDH.name),
-                    icon: const Icon(Icons.arrow_downward_rounded),
-                    label: const Text('Pull'))
+                widget._imageDH.isOfficial
+                    ? const SizedBox(width: 10.0)
+                    : Container(),
+                Expanded(child: SelectableText(widget._imageDH.name)),
+                _pulledState == 0
+                    ? ElevatedButton.icon(
+                        onPressed: _onPullAction,
+                        icon: const Icon(Icons.arrow_downward_rounded),
+                        label: const Text('Pull'))
+                    : _pulledState == 1
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator())
+                        : const Icon(Icons.done_rounded)
               ],
             ),
             const SizedBox(height: 14.0),
-            Expanded(child: Text(_imageDH.description)),
+            Expanded(child: Text(widget._imageDH.description)),
             const SizedBox(height: 14.0),
             Row(children: [
               Icon(Icons.arrow_downward_rounded,
                   color: Theme.of(context).colorScheme.primary),
-              Text('${_imageDH.pullCount}', style: textStyle),
+              Text('${widget._imageDH.pullCount}', style: textStyle),
               const SizedBox(width: 20.0),
               Icon(Icons.star_rounded,
                   color: Theme.of(context).colorScheme.primary),
-              Text('${_imageDH.starCount}', style: textStyle)
+              Text('${widget._imageDH.starCount}', style: textStyle)
             ])
           ],
         ),
