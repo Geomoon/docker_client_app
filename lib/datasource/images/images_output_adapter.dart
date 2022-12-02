@@ -65,4 +65,9 @@ class ImagesOutputAdapter implements ImagesOutputPort {
 
     return listModel.map((e) => _mapper.toDomain(e)).toList();
   }
+
+  @override
+  Future<String> findSchemeById(String id) async {
+    return await _shell.run('docker', ['image', 'inspect', id]);
+  }
 }

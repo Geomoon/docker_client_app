@@ -27,4 +27,9 @@ class ImagesInteractor implements ImagesInputPort {
     List list = await _outputPort.findByRepository(repo);
     return list.map((e) => _mapper.toDTO(e)).toList();
   }
+
+  @override
+  Future<String> getSchemeById(String id) {
+    return _outputPort.findSchemeById(id);
+  }
 }
