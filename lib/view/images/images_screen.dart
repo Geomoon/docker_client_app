@@ -41,10 +41,7 @@ class ImagesScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20.0),
                 height: c.maxHeight - 120,
                 child: TabBarView(children: [
-                  Column(children: [
-                    const SearchBarImages(),
-                    LocalImages(constraints: c)
-                  ]),
+                  LocalImagesView(constraints: c),
                   DockerHubImagesView(constraints: c),
                 ]),
               )
@@ -56,55 +53,20 @@ class ImagesScreen extends StatelessWidget {
   }
 }
 
-class FilledTab extends StatelessWidget {
-  const FilledTab({Key? key, required this.text}) : super(key: key);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tab(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-        child: Text(text),
-      ),
-    );
-  }
-}
-
-class SearchBarImages extends StatelessWidget {
-  const SearchBarImages({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 500,
-      child: TextField(
-        style: const TextStyle(fontFamily: 'Inter', fontSize: 14),
-        decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search_rounded),
-            hintText: 'Search by name',
-            hintStyle: const TextStyle(fontWeight: FontWeight.normal),
-            border: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Theme.of(context).colorScheme.outline))),
-      ),
-    );
-  }
-}
-
-class LocalImages extends StatefulWidget {
-  const LocalImages({super.key, required this.constraints});
+class LocalImagesView extends StatefulWidget {
+  const LocalImagesView({Key? key, required this.constraints})
+      : super(key: key);
 
   final BoxConstraints constraints;
 
   @override
-  State<LocalImages> createState() => _LocalImagesState();
+  State<LocalImagesView> createState() => _LocalImagesViewState();
 }
 
-class _LocalImagesState extends State<LocalImages> {
-  final ImagesInteractor interactor = ImagesInteractor(ImagesOutputAdapter());
+class _LocalImagesViewState extends State<LocalImagesView> {
+  final ImagesInteractor _interactor = ImagesInteractor(ImagesOutputAdapter());
 
-  late Future _items;
+  late Future<List<ImageDTO>> _items;
 
   @override
   void initState() {
@@ -112,8 +74,34 @@ class _LocalImagesState extends State<LocalImages> {
     _items = _list();
   }
 
+  void _searchImages(String name) {
+    if (name.isEmpty) {
+      setState(() {
+        _items = _interactor.getAll();
+      });
+    } else {
+      setState(() {
+        _items = _interactor.getByRepository(name);
+      });
+    }
+  }
+
   Future<List<ImageDTO>> _list() async {
-    return await interactor.getAll();
+    return await _interactor.getAll();
+  }
+
+  void _orderByDateAsc() {
+    _items.then((value) => value.sort(
+          (a, b) => a.createdAt!.isAfter(b.createdAt!) ? 1 : 0,
+        ));
+    setState(() {});
+  }
+
+  void _orderByDateDesc() {
+    _items.then((value) => value.sort(
+          (a, b) => a.createdAt!.isBefore(b.createdAt!) ? 1 : 0,
+        ));
+    setState(() {});
   }
 
   @override
@@ -130,32 +118,98 @@ class _LocalImagesState extends State<LocalImages> {
         ? 200
         : (widget.constraints.maxWidth >= 720 ? 240 : 200);
 
-    return Container(
-      padding: const EdgeInsets.only(top: 24.0),
-      height: widget.constraints.maxHeight - 200,
-      child: FutureBuilder(
-        future: _items,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return GridView.builder(
-            itemCount: snapshot.data!.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              mainAxisExtent: cardHeight,
-            ),
-            itemBuilder: (context, index) => LocalImageCard(
-                name: snapshot.data![index].id!,
-                createdAt: snapshot.data![index].createdAt!,
-                tags: snapshot.data![index].repoTags,
-                ports: snapshot.data![index].exposedPorts),
-          );
-        },
+    return Column(children: [
+      Row(
+        children: [
+          SearchBar(
+              hintText: 'Search by name or id',
+              width: 300,
+              onSearch: _searchImages),
+          const SizedBox(width: 20.0),
+          ThreeStateButton(
+            onTapState1: _orderByDateDesc,
+            onTapState2: _orderByDateAsc,
+          ),
+        ],
       ),
-    );
+      //LocalImages(constraints: constraints),
+
+      Container(
+        padding: const EdgeInsets.only(top: 24.0),
+        height: widget.constraints.maxHeight - 200,
+        child: FutureBuilder(
+          future: _items,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return GridView.builder(
+              itemCount: snapshot.data!.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                mainAxisExtent: cardHeight,
+              ),
+              itemBuilder: (context, index) => LocalImageCard(
+                  name: snapshot.data![index].id!,
+                  createdAt: snapshot.data![index].createdAt!,
+                  tags: snapshot.data![index].repoTags,
+                  ports: snapshot.data![index].exposedPorts),
+            );
+          },
+        ),
+      )
+    ]);
+  }
+}
+
+class ThreeStateButton extends StatefulWidget {
+  const ThreeStateButton({
+    super.key,
+    required this.onTapState1,
+    required this.onTapState2,
+  });
+
+  final Function() onTapState1;
+  final Function() onTapState2;
+
+  @override
+  State<ThreeStateButton> createState() => _ThreeStateButtonState();
+}
+
+class _ThreeStateButtonState extends State<ThreeStateButton> {
+  final List<Icon> _icons = const [
+    Icon(Icons.filter_alt),
+    Icon(Icons.keyboard_arrow_up_rounded),
+    Icon(Icons.keyboard_arrow_down_rounded),
+  ];
+
+  int _state = 0;
+
+  void _changeState() {
+    switch (_state) {
+      case 0:
+        setState(() => _state = 1);
+        widget.onTapState1();
+        break;
+      case 1:
+        setState(() => _state = 2);
+        widget.onTapState2();
+        break;
+      case 2:
+        setState(() => _state = 0);
+        break;
+      default:
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+        onPressed: _changeState,
+        icon: _icons[_state],
+        label: const Text('By Date'));
   }
 }
 
@@ -204,10 +258,10 @@ class LocalImageCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14.0),
-            SelectableText(_buildTagsString()),
+            Expanded(child: SelectableText(_buildTagsString())),
             const SizedBox(height: 14.0),
             Text('EXPOSED PORTS:', style: textStyle),
-            SelectableText(_buildPortsString()),
+            Expanded(child: SelectableText(_buildPortsString())),
             const SizedBox(height: 14.0),
             Text(_formatDate())
           ],
@@ -217,13 +271,26 @@ class LocalImageCard extends StatelessWidget {
   }
 }
 
+class FilledTab extends StatelessWidget {
+  const FilledTab({Key? key, required this.text}) : super(key: key);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+        child: Text(text),
+      ),
+    );
+  }
+}
+
 // Docker HUB
 
 class DockerHubImagesView extends StatefulWidget {
-  const DockerHubImagesView({
-    Key? key,
-    required this.constraints,
-  }) : super(key: key);
+  const DockerHubImagesView({Key? key, required this.constraints})
+      : super(key: key);
   final BoxConstraints constraints;
 
   @override
@@ -268,7 +335,8 @@ class _DockerHubImagesViewState extends State<DockerHubImagesView> {
         : (widget.constraints.maxWidth >= 720 ? 240 : 200);
 
     return Column(children: [
-      SearchBarDockerHubImages(onSearch: _searchImages),
+      SearchBar(
+          onSearch: _searchImages, hintText: 'Search by name', width: 400),
       Container(
         padding: const EdgeInsets.only(top: 24.0),
         height: widget.constraints.maxHeight - 200,
@@ -305,7 +373,7 @@ class _DockerHubImagesViewState extends State<DockerHubImagesView> {
 }
 
 class DockerHubImageCard extends StatefulWidget {
-  DockerHubImageCard(this._imageDH, {super.key, required this.onPull});
+  const DockerHubImageCard(this._imageDH, {super.key, required this.onPull});
 
   final ImageDH _imageDH;
 
@@ -385,26 +453,35 @@ class _DockerHubImageCardState extends State<DockerHubImageCard> {
   }
 }
 
-class SearchBarDockerHubImages extends StatelessWidget {
-  SearchBarDockerHubImages({super.key, required this.onSearch});
+class SearchBar extends StatefulWidget {
+  const SearchBar(
+      {super.key, required this.hintText, required this.onSearch, this.width});
 
   final Function(String) onSearch;
+  final String hintText;
+  final double? width;
+
+  @override
+  State<SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 500,
+      width: widget.width ?? 500,
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _controller,
-              onSubmitted: (value) => onSearch(value),
+              onSubmitted: (value) => widget.onSearch(value),
               style: const TextStyle(fontFamily: 'Inter', fontSize: 14),
               decoration: InputDecoration(
                   hintStyle: const TextStyle(fontWeight: FontWeight.normal),
-                  hintText: 'Search by name',
+                  hintText: widget.hintText,
                   border: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.outline))),
@@ -412,7 +489,7 @@ class SearchBarDockerHubImages extends StatelessWidget {
           ),
           const SizedBox(width: 10.0),
           IconButton(
-            onPressed: () => onSearch(_controller.text),
+            onPressed: () => widget.onSearch(_controller.text),
             icon: const Icon(Icons.search_rounded),
             style: IconButton.styleFrom(
               foregroundColor:
