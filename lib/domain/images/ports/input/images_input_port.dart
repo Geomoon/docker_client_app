@@ -5,4 +5,5 @@ abstract class ImagesInputPort {
   Future<ImageDTO> getById(String id);
   Future<List<ImageDTO>> getByRepository(String repo);
   Future<String> getSchemeById(String id);
+  Future deleteById(String id);
 }

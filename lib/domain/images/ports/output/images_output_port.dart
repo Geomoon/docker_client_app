@@ -5,4 +5,5 @@ abstract class ImagesOutputPort {
   Future<Image?> findById(String id);
   Future<List<Image>> findByRepository(String repo);
   Future<String> findSchemeById(String id);
+  Future<bool> deleteById(String id);
 }

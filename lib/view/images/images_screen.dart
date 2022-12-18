@@ -5,6 +5,7 @@ import 'package:docker_client_app/datasource/images_docker_hub/images_dh_output_
 import 'package:docker_client_app/domain/images/ports/input/image_dto.dart';
 import 'package:docker_client_app/domain/images_docker_hub/image_docker_hub.dart';
 import 'package:docker_client_app/view/shared/themes/color_schemes.g.dart';
+import 'package:docker_client_app/view/shared/widgets/red_button_icon.dart';
 import 'package:docker_client_app/view/shared/widgets/screen_title.dart';
 import 'package:flutter/material.dart';
 
@@ -110,8 +111,17 @@ class _LocalImagesViewState extends State<LocalImagesView> {
   void _showImageInfoDialog(BuildContext context, String imageId) async {
     String scheme = await _interactor.getSchemeById(imageId);
     showDialog(
-        context: context,
-        builder: (context) => ImageSchemeDialog(scheme: scheme));
+      context: context,
+      builder: (context) => ImageSchemeDialog(
+        scheme: scheme,
+        onDelete: () => _interactor.deleteById(imageId).then((value) {
+          Navigator.pop(context);
+          setState(() {
+            _items = _interactor.getAll();
+          });
+        }),
+      ),
+    );
   }
 
   @override
@@ -172,9 +182,11 @@ class _LocalImagesViewState extends State<LocalImagesView> {
 }
 
 class ImageSchemeDialog extends StatefulWidget {
-  const ImageSchemeDialog({super.key, required this.scheme});
+  const ImageSchemeDialog(
+      {super.key, required this.scheme, required this.onDelete});
 
   final String scheme;
+  final Function() onDelete;
 
   @override
   State<ImageSchemeDialog> createState() => _ImageSchemeDialogState();
@@ -204,6 +216,8 @@ class _ImageSchemeDialogState extends State<ImageSchemeDialog> {
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
                             color: fonts['color']))),
+                RedButtonIcon(onPressed: widget.onDelete),
+                const SizedBox(width: 10.0),
                 _isCopied
                     ? Container(
                         padding: const EdgeInsets.symmetric(

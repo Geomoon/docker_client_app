@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/mounts/ports/input/mounts_input_port.dart';
 import '../shared/themes/color_schemes.g.dart';
+import '../shared/widgets/red_button_icon.dart';
 import '../shared/widgets/screen_title.dart';
 import '../shared/widgets/search_bar.dart';
 import '../shared/widgets/three_state_button.dart';
@@ -264,19 +265,7 @@ class _VolumeSchemeDialogState extends State<VolumeSchemeDialog> {
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
                             color: fonts['color']))),
-                ElevatedButton.icon(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .onError
-                            .withOpacity(0.08)),
-                    icon: Icon(Icons.delete_forever_rounded,
-                        color: Theme.of(context).colorScheme.errorContainer),
-                    label: Text('Delete',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.errorContainer))),
+                RedButtonIcon(onPressed: () {}),
                 const SizedBox(width: 10.0),
                 _isCopied
                     ? Container(

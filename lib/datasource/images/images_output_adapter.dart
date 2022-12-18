@@ -70,4 +70,10 @@ class ImagesOutputAdapter implements ImagesOutputPort {
   Future<String> findSchemeById(String id) async {
     return await _shell.run('docker', ['image', 'inspect', id]);
   }
+
+  @override
+  Future<bool> deleteById(String id) async {
+    await _shell.run('docker', ['image', 'rm', id]);
+    return true;
+  }
 }

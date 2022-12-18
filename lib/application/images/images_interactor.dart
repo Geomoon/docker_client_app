@@ -32,4 +32,9 @@ class ImagesInteractor implements ImagesInputPort {
   Future<String> getSchemeById(String id) {
     return _outputPort.findSchemeById(id);
   }
+
+  @override
+  Future deleteById(String id) async {
+    return await _outputPort.deleteById(id);
+  }
 }
