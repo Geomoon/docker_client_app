@@ -1,6 +1,7 @@
 import 'package:docker_client_app/view/containers/containers_screen.dart';
 import 'package:docker_client_app/view/home/home_screen.dart';
 import 'package:docker_client_app/view/images/images_screen.dart';
+import 'package:docker_client_app/view/mounts/mounts_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'view/shared/themes/color_schemes.g.dart';
@@ -40,7 +41,7 @@ class _LayoutState extends State<Layout> {
     HomeScreen(),
     ContainersScreen(),
     ImagesScreen(),
-    Center(child: Text('Mounts')),
+    MountsScreen(),
     Center(child: Text('Networks')),
   ];
 

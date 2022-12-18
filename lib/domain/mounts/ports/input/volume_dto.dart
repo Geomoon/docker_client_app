@@ -14,4 +14,15 @@ class VolumeDTO implements MountDTO {
     this.scope,
     this.createdAt,
   });
+
+  @override
+  String toString() {
+    return '{\n'
+        '\tname: $name,\n'
+        '\tdriver: $driver,\n'
+        '\tscope: $scope,\n'
+        '\tmountpoint: $mountpoint,\n'
+        '\tcreatedAt: $createdAt\n'
+        '}';
+  }
 }

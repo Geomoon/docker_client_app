@@ -30,7 +30,7 @@ class MainContent extends StatelessWidget {
         total: 12,
         icon: Icons.widgets_rounded,
         moreInfo: '3 running'),
-    ItemCard(title: 'Images', total: 18, icon: Icons.layers_rounded),
+    ItemCard(title: 'Images', total: 14, icon: Icons.layers_rounded),
     ItemCard(title: 'Mounts', total: 6, icon: Icons.dns_rounded),
     ItemCard(title: 'Networks', total: 4, icon: Icons.stream_rounded),
   ];
@@ -208,8 +208,7 @@ class PopularImagesList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 12),
-        const Text('Popular Images',
-            style: TextStyle(fontFamily: 'Epilogue', fontSize: 12)),
+        const Text('Popular Images', style: TextStyle(fontSize: 12)),
         const SizedBox(height: 12),
         ...items
       ],
@@ -320,7 +319,7 @@ class _ItemCardState extends State<ItemCard> {
               const SizedBox(height: 12.0),
               Text(
                 widget.title,
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 18.0),
+                style: const TextStyle(fontSize: 18.0),
               ),
               const SizedBox(height: 18.0),
               _buildMoreInfo(),
@@ -341,7 +340,7 @@ class _ItemCardState extends State<ItemCard> {
         const SizedBox(width: 20.0),
         Text(
           widget.moreInfo!,
-          style: const TextStyle(fontFamily: 'Inter', fontSize: 12.0),
+          style: const TextStyle(fontSize: 12.0),
         ),
       ],
     );

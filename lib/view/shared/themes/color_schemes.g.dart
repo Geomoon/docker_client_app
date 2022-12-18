@@ -49,7 +49,8 @@ const darkColorScheme = ColorScheme(
   onTertiaryContainer: Color(0xFFFFD8E4),
   error: Color(0xFFF2B8B5),
   onError: Color(0xFF601410),
-  errorContainer: Color(0xFF8C1D18),
+  //errorContainer: Color(0xFF8C1D18),
+  errorContainer: Color(0xFFF85149),
   onErrorContainer: Color(0xFFF9DEDC),
   outline: Color(0xFF21262d),
   background: Color(0xFF0D1117),
@@ -72,6 +73,6 @@ const fonts = {
 const darkTextTheme = TextTheme(
   headline1: TextStyle(color: Color(0xFFC9D1D9), fontFamily: 'Epilogue'),
   headline2: TextStyle(color: Color(0xFFC9D1D9), fontFamily: 'Epilogue'),
-  bodyText2: TextStyle(color: Color(0xFFC9D1D9), fontFamily: 'Inter'),
-  subtitle1: TextStyle(color: Color(0xFFC9D1D9), fontFamily: 'Inter'),
+  bodyText2: TextStyle(color: Color(0xFFC9D1D9), fontFamily: 'Roboto'),
+  subtitle1: TextStyle(color: Color(0xFFC9D1D9), fontFamily: 'Roboto'),
 );

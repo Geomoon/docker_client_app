@@ -7,10 +7,10 @@ import 'package:docker_client_app/domain/images_docker_hub/image_docker_hub.dart
 import 'package:docker_client_app/view/shared/themes/color_schemes.g.dart';
 import 'package:docker_client_app/view/shared/widgets/screen_title.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 
 import '../shared/utils.dart';
+import '../shared/widgets/search_bar.dart';
+import '../shared/widgets/three_state_button.dart';
 
 class ImagesScreen extends StatelessWidget {
   const ImagesScreen({super.key});
@@ -22,7 +22,7 @@ class ImagesScreen extends StatelessWidget {
       child: LayoutBuilder(builder: (_, c) {
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const ScreenTitle('Images'),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 10.0),
           DefaultTabController(
             length: 2,
             child:
@@ -130,6 +130,7 @@ class _LocalImagesViewState extends State<LocalImagesView> {
 
     return Column(children: [
       Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SearchBar(
               hintText: 'Search by name or id',
@@ -171,7 +172,7 @@ class _LocalImagesViewState extends State<LocalImagesView> {
 }
 
 class ImageSchemeDialog extends StatefulWidget {
-  ImageSchemeDialog({super.key, required this.scheme});
+  const ImageSchemeDialog({super.key, required this.scheme});
 
   final String scheme;
 
@@ -240,7 +241,7 @@ class _ImageSchemeDialogState extends State<ImageSchemeDialog> {
             SingleChildScrollView(
               child: ConstrainedBox(
                 constraints:
-                    const BoxConstraints(maxHeight: 600, maxWidth: 1230),
+                    const BoxConstraints(maxHeight: 620, maxWidth: 1230),
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
@@ -262,55 +263,6 @@ class _ImageSchemeDialogState extends State<ImageSchemeDialog> {
   }
 }
 
-class ThreeStateButton extends StatefulWidget {
-  const ThreeStateButton({
-    super.key,
-    required this.onTapState1,
-    required this.onTapState2,
-  });
-
-  final Function() onTapState1;
-  final Function() onTapState2;
-
-  @override
-  State<ThreeStateButton> createState() => _ThreeStateButtonState();
-}
-
-class _ThreeStateButtonState extends State<ThreeStateButton> {
-  final List<Icon> _icons = const [
-    Icon(Icons.filter_alt),
-    Icon(Icons.keyboard_arrow_up_rounded),
-    Icon(Icons.keyboard_arrow_down_rounded),
-  ];
-
-  int _state = 0;
-
-  void _changeState() {
-    switch (_state) {
-      case 0:
-        setState(() => _state = 1);
-        widget.onTapState1();
-        break;
-      case 1:
-        setState(() => _state = 2);
-        widget.onTapState2();
-        break;
-      case 2:
-        setState(() => _state = 0);
-        break;
-      default:
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-        onPressed: _changeState,
-        icon: _icons[_state],
-        label: const Text('By Date'));
-  }
-}
-
 class LocalImageCard extends StatelessWidget {
   const LocalImageCard(
       {super.key, required this.imageDTO, required this.onPressInfo});
@@ -329,8 +281,7 @@ class LocalImageCard extends StatelessWidget {
 
   String _buildID() => imageDTO.id!.substring(7, 19);
 
-  String _formatDate() =>
-      DateFormat('yyyy-MM-dd – kk:mm').format(imageDTO.createdAt!);
+  String _formatDate() => formatDate(imageDTO.createdAt!);
 
   @override
   Widget build(BuildContext context) {
@@ -546,70 +497,6 @@ class _DockerHubImageCardState extends State<DockerHubImageCard> {
             ])
           ],
         ),
-      ),
-    );
-  }
-}
-
-class SearchBar extends StatefulWidget {
-  const SearchBar(
-      {super.key, required this.hintText, required this.onSearch, this.width});
-
-  final Function(String) onSearch;
-  final String hintText;
-  final double? width;
-
-  @override
-  State<SearchBar> createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<SearchBar> {
-  final TextEditingController _controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width ?? 500,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              onSubmitted: (value) => widget.onSearch(value),
-              style: const TextStyle(fontFamily: 'Inter', fontSize: 14),
-              decoration: InputDecoration(
-                  hintStyle: const TextStyle(fontWeight: FontWeight.normal),
-                  hintText: widget.hintText,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.outline))),
-            ),
-          ),
-          const SizedBox(width: 10.0),
-          IconButton(
-            onPressed: () => widget.onSearch(_controller.text),
-            icon: const Icon(Icons.search_rounded),
-            style: IconButton.styleFrom(
-              foregroundColor:
-                  Theme.of(context).colorScheme.onSecondaryContainer,
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              disabledBackgroundColor:
-                  Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
-              hoverColor: Theme.of(context)
-                  .colorScheme
-                  .onSecondaryContainer
-                  .withOpacity(0.08),
-              focusColor: Theme.of(context)
-                  .colorScheme
-                  .onSecondaryContainer
-                  .withOpacity(0.12),
-              highlightColor: Theme.of(context)
-                  .colorScheme
-                  .onSecondaryContainer
-                  .withOpacity(0.12),
-            ),
-          )
-        ],
       ),
     );
   }

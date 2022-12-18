@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:docker_client_app/datasource/networks/network_model.dart';
@@ -100,10 +99,4 @@ class NetworksOutputAdapter implements NetworksOutputPort {
 
     return modelList.map((e) => _mapper.toDomain(e)).toList();
   }
-}
-
-void main(List<String> args) async {
-  var port = NetworksOutputAdapter();
-  var res = await port.findByContainer('mysql_db');
-  print(res);
 }

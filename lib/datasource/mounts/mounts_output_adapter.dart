@@ -100,4 +100,27 @@ class MountsOutputAdapter implements MountsOutputPort {
 
     return VolumeModel.fromJson(decoded[0]);
   }
+
+  @override
+  Future<String> findVolumeSchemeById(String id) async {
+    return await _shell.run('docker', ['volume', 'inspect', id]);
+  }
+
+  @override
+  Future<List<Volume>> findVolumesByRegexID(String id) async {
+    var idsString = await _shell.run(
+        'docker', ['volume', 'ls', '-f=name=$id*', '--format', '{{.Name}}']);
+
+    List<String> idsList = idsString.split('\n');
+
+    var jsonString =
+        await _shell.run('docker', ['volume', 'inspect', ...idsList]);
+
+    List decodec = json.decode(jsonString);
+
+    List<VolumeModel> listModel =
+        decodec.map((e) => VolumeModel.fromJson(e)).toList();
+
+    return listModel.map((e) => _mapper.toDomainVolume(e)).toList();
+  }
 }
