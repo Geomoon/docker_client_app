@@ -2,6 +2,7 @@ import 'package:docker_client_app/view/containers/containers_screen.dart';
 import 'package:docker_client_app/view/home/home_screen.dart';
 import 'package:docker_client_app/view/images/images_screen.dart';
 import 'package:docker_client_app/view/mounts/mounts_screen.dart';
+import 'package:docker_client_app/view/networks/networks_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'view/shared/themes/color_schemes.g.dart';
@@ -42,7 +43,7 @@ class _LayoutState extends State<Layout> {
     ContainersScreen(),
     ImagesScreen(),
     MountsScreen(),
-    Center(child: Text('Networks')),
+    NetworksScreen(),
   ];
 
   int _selectedIndex = 0;
@@ -128,19 +129,34 @@ class SideBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(flex: 1, child: buildCircleImage()),
+          const SizedBox(
+            height: 10.0,
+          ),
+          const Expanded(flex: 1, child: Logo()),
+          const SizedBox(
+            height: 10.0,
+          ),
           Expanded(flex: 8, child: navWidget)
         ],
       ),
     );
   }
+}
 
-  Center buildCircleImage() {
+class Logo extends StatelessWidget {
+  const Logo({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(18.0)),
-        child:
-            Image.asset('assets/images/logo_blue.png', width: 60, height: 60),
+        child: Container(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            child: Image.asset('assets/images/logo_new_bg.png',
+                width: 60, height: 60)),
       ),
     );
   }

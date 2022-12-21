@@ -2,6 +2,7 @@ import 'package:docker_client_app/application/mounts/mounts_interactor.dart';
 import 'package:docker_client_app/datasource/mounts/mounts_output_adapter.dart';
 import 'package:docker_client_app/domain/mounts/ports/input/volume_dto.dart';
 import 'package:docker_client_app/view/shared/utils.dart';
+import 'package:docker_client_app/view/shared/widgets/success_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../domain/mounts/ports/input/mounts_input_port.dart';
@@ -68,8 +69,7 @@ class _VolumesViewState extends State<VolumesView> {
       });
     } else {
       setState(() {
-        _items =
-            widget._interactor.getVolumeById(name).then((value) => [value]);
+        _items = widget._interactor.getVolumesByRegexID(name);
       });
     }
   }
@@ -120,13 +120,6 @@ class _VolumesViewState extends State<VolumesView> {
             onTapState2: _orderByDateAsc,
           ),
           Expanded(child: Container()),
-          /*SizedBox(
-            height: 40,
-            child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('Create volume')),
-          ),*/
           SizedBox(
             height: 50.0,
             child: FloatingActionButton.extended(
@@ -268,20 +261,7 @@ class _VolumeSchemeDialogState extends State<VolumeSchemeDialog> {
                 RedButtonIcon(onPressed: () {}),
                 const SizedBox(width: 10.0),
                 _isCopied
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF39D353).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(24.0)),
-                        child: Row(
-                          children: const [
-                            Text('Copied',
-                                style: TextStyle(color: Color(0xFF39D353))),
-                            SizedBox(width: 6.0),
-                            Icon(Icons.done_rounded, color: Color(0xFF39D353)),
-                          ],
-                        ))
+                    ? const SuccessButton(text: 'Copied')
                     : ElevatedButton.icon(
                         onPressed: () async {
                           await copyToClipboard(widget.scheme);

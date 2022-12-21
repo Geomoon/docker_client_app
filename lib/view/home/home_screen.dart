@@ -86,7 +86,7 @@ class SideBarHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: darkColorScheme.surfaceVariant,
+      color: Theme.of(context).colorScheme.surfaceVariant,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
           return SingleChildScrollView(
@@ -309,8 +309,7 @@ class _ItemCardState extends State<ItemCard> {
                           fontWeight: FontWeight.bold)),
                   Container(
                       decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
                           borderRadius: BorderRadius.circular(6.0)),
                       padding: const EdgeInsets.all(10.0),
                       child: Icon(widget.icon, color: darkColorScheme.primary)),

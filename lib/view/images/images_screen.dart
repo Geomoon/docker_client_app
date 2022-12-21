@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../shared/utils.dart';
 import '../shared/widgets/search_bar.dart';
+import '../shared/widgets/success_button.dart';
 import '../shared/widgets/three_state_button.dart';
 
 class ImagesScreen extends StatelessWidget {
@@ -219,20 +220,7 @@ class _ImageSchemeDialogState extends State<ImageSchemeDialog> {
                 RedButtonIcon(onPressed: widget.onDelete),
                 const SizedBox(width: 10.0),
                 _isCopied
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF39D353).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(24.0)),
-                        child: Row(
-                          children: const [
-                            Text('Copied',
-                                style: TextStyle(color: Color(0xFF39D353))),
-                            SizedBox(width: 6.0),
-                            Icon(Icons.done_rounded, color: Color(0xFF39D353)),
-                          ],
-                        ))
+                    ? const SuccessButton(text: 'Copied')
                     : ElevatedButton.icon(
                         onPressed: () async {
                           await copyToClipboard(widget.scheme);
@@ -251,21 +239,24 @@ class _ImageSchemeDialogState extends State<ImageSchemeDialog> {
                     label: const Text('Close')),
               ],
             ),
-            const SizedBox(height: 10.0),
-            SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(maxHeight: 620, maxWidth: 1230),
-                child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: SelectableText(widget.scheme,
-                              style: TextStyle(
-                                  fontFamily: 'JetBrains',
-                                  color: fonts['color'],
-                                  fontWeight: FontWeight.normal))),
-                    ],
+            const SizedBox(height: 20.0),
+            Container(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxHeight: 620, maxWidth: 1230),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: SelectableText(widget.scheme,
+                                style: TextStyle(
+                                    fontFamily: 'JetBrains',
+                                    color: fonts['color'],
+                                    fontWeight: FontWeight.normal))),
+                      ],
+                    ),
                   ),
                 ),
               ),
