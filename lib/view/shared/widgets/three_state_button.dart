@@ -43,6 +43,10 @@ class _ThreeStateButtonState extends State<ThreeStateButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+          backgroundColor: Theme.of(context).colorScheme.background,
+        ),
         onPressed: _changeState,
         icon: _icons[_state],
         label: const Text('By Date'));

@@ -27,12 +27,10 @@ class MountsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20.0),
           Container(
-              decoration: BoxDecoration(
-                  //color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20.0)),
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
               padding: const EdgeInsets.only(top: 20.0),
               height: c.maxHeight - 64,
-              //child: SingleChildScrollView(
               child: VolumesView(MountsInteractor(MountsOutputAdapter()),
                   constraints: c))
           //,)
@@ -128,7 +126,7 @@ class _VolumesViewState extends State<VolumesView> {
               },
               foregroundColor:
                   Theme.of(context).colorScheme.onSecondaryContainer,
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.background,
               hoverColor: Theme.of(context)
                   .colorScheme
                   .onSecondaryContainer
@@ -137,6 +135,7 @@ class _VolumesViewState extends State<VolumesView> {
                   .colorScheme
                   .onSecondaryContainer
                   .withOpacity(0.12),
+              elevation: 0,
               label: const Text('Create volume'),
               icon: const Icon(Icons.add),
             ),
@@ -236,65 +235,78 @@ class VolumeSchemeDialog extends StatefulWidget {
 
 class _VolumeSchemeDialogState extends State<VolumeSchemeDialog> {
   bool _isCopied = false;
+  final BorderRadius _borderRadius = BorderRadius.circular(12.0);
+  final Radius _radius = const Radius.circular(12.0);
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
+      shape: RoundedRectangleBorder(
+          borderRadius: _borderRadius,
+          side: BorderSide(
+              width: 1.0, color: Theme.of(context).colorScheme.outline)),
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      child: SizedBox(
         height: 480,
         width: 1078,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                    child: Text('Volume Scheme',
-                        style: TextStyle(
-                            fontFamily: 'Epilogue',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: fonts['color']))),
-                RedButtonIcon(onPressed: () {}),
-                const SizedBox(width: 10.0),
-                _isCopied
-                    ? const SuccessButton(text: 'Copied')
-                    : ElevatedButton.icon(
-                        onPressed: () async {
-                          await copyToClipboard(widget.scheme);
-                          setState(() {
-                            _isCopied = true;
-                          });
-                        },
-                        icon: const Icon(Icons.copy_rounded),
-                        label: const Text('Copy scheme')),
-                const SizedBox(width: 10.0),
-                ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.close_rounded),
-                    label: const Text('Close')),
-              ],
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius:
+                      BorderRadius.only(topLeft: _radius, topRight: _radius)),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Text('Volume Scheme',
+                          style: TextStyle(
+                              fontFamily: 'Epilogue',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: fonts['color']))),
+                  RedButtonIcon(onPressed: () {}),
+                  const SizedBox(width: 10.0),
+                  _isCopied
+                      ? const SuccessButton(text: 'Copied')
+                      : ElevatedButton.icon(
+                          onPressed: () async {
+                            await copyToClipboard(widget.scheme);
+                            setState(() {
+                              _isCopied = true;
+                            });
+                          },
+                          icon: const Icon(Icons.copy_rounded),
+                          label: const Text('Copy scheme')),
+                  const SizedBox(width: 10.0),
+                  ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close_rounded),
+                      label: const Text('Close')),
+                ],
+              ),
             ),
-            const SizedBox(height: 10.0),
             SingleChildScrollView(
               child: ConstrainedBox(
                 constraints:
                     const BoxConstraints(maxHeight: 600, maxWidth: 1230),
                 child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: SelectableText(widget.scheme,
-                              style: TextStyle(
-                                  fontFamily: 'JetBrains',
-                                  color: fonts['color'],
-                                  fontWeight: FontWeight.normal))),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: SelectableText(widget.scheme,
+                                style: TextStyle(
+                                    fontFamily: 'JetBrains',
+                                    color: fonts['color'],
+                                    fontWeight: FontWeight.normal))),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -302,6 +314,22 @@ class _VolumeSchemeDialogState extends State<VolumeSchemeDialog> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CreateVolumeDialog extends StatefulWidget {
+  const CreateVolumeDialog({super.key});
+
+  @override
+  State<CreateVolumeDialog> createState() => _CreateVolumeDialogState();
+}
+
+class _CreateVolumeDialogState extends State<CreateVolumeDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(),
     );
   }
 }

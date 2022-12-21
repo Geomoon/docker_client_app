@@ -195,58 +195,68 @@ class ImageSchemeDialog extends StatefulWidget {
 
 class _ImageSchemeDialogState extends State<ImageSchemeDialog> {
   bool _isCopied = false;
+  final BorderRadius _borderRadius = BorderRadius.circular(12.0);
+  final Radius _radius = const Radius.circular(12.0);
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
+      shape: RoundedRectangleBorder(
+          borderRadius: _borderRadius,
+          side: BorderSide(
+              width: 1.0, color: Theme.of(context).colorScheme.outline)),
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      child: SizedBox(
         height: 720,
-        width: 1280,
+        width: 1078,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                    child: Text('Image Scheme',
-                        style: TextStyle(
-                            fontFamily: 'Epilogue',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: fonts['color']))),
-                RedButtonIcon(onPressed: widget.onDelete),
-                const SizedBox(width: 10.0),
-                _isCopied
-                    ? const SuccessButton(text: 'Copied')
-                    : ElevatedButton.icon(
-                        onPressed: () async {
-                          await copyToClipboard(widget.scheme);
-                          setState(() {
-                            _isCopied = true;
-                          });
-                        },
-                        icon: const Icon(Icons.copy_rounded),
-                        label: const Text('Copy scheme')),
-                const SizedBox(width: 10.0),
-                ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.close_rounded),
-                    label: const Text('Close')),
-              ],
-            ),
-            const SizedBox(height: 20.0),
             Container(
-              color: Theme.of(context).colorScheme.surfaceVariant,
-              child: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints:
-                      const BoxConstraints(maxHeight: 620, maxWidth: 1230),
-                  child: IntrinsicHeight(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius:
+                      BorderRadius.only(topLeft: _radius, topRight: _radius)),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Text('Image Scheme',
+                          style: TextStyle(
+                              fontFamily: 'Epilogue',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: fonts['color']))),
+                  RedButtonIcon(onPressed: widget.onDelete),
+                  const SizedBox(width: 10.0),
+                  _isCopied
+                      ? const SuccessButton(text: 'Copied')
+                      : ElevatedButton.icon(
+                          onPressed: () async {
+                            await copyToClipboard(widget.scheme);
+                            setState(() {
+                              _isCopied = true;
+                            });
+                          },
+                          icon: const Icon(Icons.copy_rounded),
+                          label: const Text('Copy scheme')),
+                  const SizedBox(width: 10.0),
+                  ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close_rounded),
+                      label: const Text('Close')),
+                ],
+              ),
+            ),
+            SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxHeight: 620, maxWidth: 1230),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Column(
                       children: [
                         Expanded(
